@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0d0c">
+<meta name="description" content="LOOP helps you organise clients, track follow-ups and manage your opportunity pipeline. A product by COMECODE Studio."><title>LOOP — Client Relationship Workspace</title>
+<style>
+  :root {
+    --bg: #f6f7f5;
+    --panel: #ffffff;
+    --panel-soft: #fafbf9;
+    --ink: #202720;
+    --muted: #7c857d;
+    --line: #e8ebe6;
+    --green: #23865b;
+    --green-dark: #176b46;
+    --green-soft: #eaf5ee;
+    --amber: #a86c20;
+    --amber-soft: #fbf1df;
+    --red: #b64d4d;
+    --red-soft: #faeaea;
+    --shadow: 0 14px 36px rgba(25, 43, 30, .045);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  button, input, select, textarea { font: inherit; }
+  button { cursor: pointer; }
+  .app { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0,1fr); }
+  aside { background: #fff; border-right: 1px solid var(--line); padding: 26px 16px; display: flex; flex-direction: column; gap: 30px; }
+  .brand { display: flex; gap: 11px; align-items: center; padding: 0 10px; }
+  .brand-mark { width: 42px; height: 36px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; gap: 0; border: 1px solid #263126; border-radius: 10px; font-weight: 900; font-size: 23px; line-height: 1; letter-spacing: -3px; padding-right: 3px; box-shadow: 0 5px 16px #0001; flex-shrink: 0; }
+  .brand-mark .cc-first { color: #fff; } .brand-mark .cc-second { color: #39ff14; }
+  .brand-name { font-weight: 750; letter-spacing: -.7px; font-size: 18px; }
+  .brand-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .nav-label { padding: 0 12px; text-transform: uppercase; letter-spacing: 1.4px; font-size: 10px; font-weight: 750; color: #9aa19b; margin-bottom: 8px; }
+  nav { display: grid; gap: 5px; }
+  .nav-item { border: 0; background: transparent; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 11px; text-align: left; color: #69736b; font-size: 13px; font-weight: 600; }
+  .nav-item .ico { width: 20px; text-align: center; font-size: 16px; }
+  .nav-item.active { background: var(--green-soft); color: var(--green-dark); }
+  .nav-count { margin-left: auto; font-size: 11px; background: #fff; padding: 3px 7px; border-radius: 7px; }
+  .sidebar-bottom { margin-top: auto; }
+  .upgrade { background: #f7f9f6; border: 1px solid var(--line); border-radius: 15px; padding: 15px; }
+  .upgrade-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; background: white; margin-bottom: 11px; }
+  .upgrade strong { font-size: 12px; }
+  .upgrade p { font-size: 11px; line-height: 1.6; color: var(--muted); margin: 7px 0 12px; }
+  .small-link { border: 0; background: none; color: var(--green); font-size: 11px; font-weight: 750; padding: 0; }
+  .user { display: flex; gap: 10px; align-items: center; padding: 18px 8px 0; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: #e9eee8; display: grid; place-items: center; color: #42634c; font-weight: 750; font-size: 12px; flex: 0 0 auto; }
+  .user-name { font-size: 12px; font-weight: 700; }
+  .user-role { color: var(--muted); font-size: 10px; margin-top: 3px; }
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 52px) 52px; max-width: 1500px; width: 100%; margin: 0 auto; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 35px; }
+  .breadcrumb { color: var(--muted); font-size: 12px; }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+  .icon-btn { border: 1px solid var(--line); background: white; height: 38px; width: 38px; border-radius: 11px; color: #6b756d; }
+  .primary { background: #b8ff65; color: #0b0d0c; border: 1px solid var(--green); border-radius: 11px; padding: 11px 15px; font-weight: 700; font-size: 12px; box-shadow: 0 4px 10px #23865b20; }
+  .primary:hover { background: var(--green-dark); }
+  .secondary { background: white; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; font-weight: 650; font-size: 12px; }
+  .intro { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 26px; }
+  .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1.8px; color: var(--green); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(27px, 3vw, 36px); letter-spacing: -1.6px; line-height: 1.12; margin: 0; font-weight: 760; }
+  .subtitle { color: var(--muted); font-size: 13px; line-height: 1.65; margin: 10px 0 0; }
+  .date-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
+  .product-credit { margin-top: 30px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .product-credit-label { color: var(--muted); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
+  .comecode-wordmark { display: inline-flex; align-items: center; gap: 0; padding: 7px 10px; border-radius: 9px; background: #0b0d0c; font-size: 12px; font-weight: 850; letter-spacing: -.35px; white-space: nowrap; }
+  .comecode-wordmark .come { color: #fff; }
+  .comecode-wordmark .code { color: #b8ff65; }
+  @media (max-width: 420px) { .product-credit { align-items: flex-start; flex-direction: column; } }
+  .stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
+  .stat { background: white; border: 1px solid var(--line); border-radius: var(--radius); padding: 19px; box-shadow: var(--shadow); min-width: 0; }
+  .stat-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 11px; font-weight: 600; gap: 8px; }
+  .stat-symbol { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 10px; background: #f4f6f3; color: var(--green); }
+  .stat-value { font-size: 30px; font-weight: 760; letter-spacing: -1.5px; margin-top: 16px; }
+  .stat-note { font-size: 10px; color: var(--muted); margin-top: 5px; }
+  .dashboard-grid { display: grid; grid-template-columns: minmax(0,1.55fr) minmax(270px,.9fr); gap: 18px; align-items: start; }
+  .panel { background: white; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; overflow: hidden; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 21px 22px; border-bottom: 1px solid #eff1ed; }
+  .panel-title { font-size: 14px; font-weight: 750; letter-spacing: -.25px; }
+  .panel-desc { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .panel-body { padding: 18px 22px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 9px; font-size: 10px; font-weight: 750; white-space: nowrap; }
+  .pill.green { background: var(--green-soft); color: var(--green-dark); }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+  .pill.red { background: var(--red-soft); color: var(--red); }
+  .pill.gray { background: #f1f3f0; color: #6f776f; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .search-row { display: flex; gap: 9px; margin-bottom: 13px; }
+  .search { width: 100%; min-width: 0; border: 1px solid var(--line); background: #fbfcfa; border-radius: 10px; padding: 11px 12px; font-size: 12px; outline: none; }
+  .search:focus, .field:focus { border-color: #83bd9c; box-shadow: 0 0 0 3px #23865b12; }
+  .filter { border: 1px solid var(--line); background: white; color: #687168; border-radius: 10px; padding: 0 10px; font-size: 11px; }
+  .contact-list { display: grid; }
+  .contact { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f2ee; }
+  .contact:last-child { border-bottom: 0; }
+  .contact-main { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .contact-avatar { width: 38px; height: 38px; flex: 0 0 auto; border-radius: 13px; background: #eef3ed; color: #52705a; display: grid; place-items: center; font-weight: 750; font-size: 12px; }
+  .contact-name { font-size: 12px; font-weight: 750; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .contact-meta { color: var(--muted); font-size: 10px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .contact-actions { display: flex; align-items: center; gap: 7px; }
+  .mini-btn { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; font-size: 10px; color: #667067; font-weight: 700; }
+  .mini-btn:hover, .secondary:hover { border-color: #c9d7ca; background: #fafcf9; }
+  .timeline { display: grid; gap: 0; }
+  .timeline-item { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 12px; padding: 15px 0; border-bottom: 1px solid #f0f2ee; }
+  .timeline-item:last-child { border-bottom: 0; }
+  .timeline-date { width: 36px; height: 42px; background: #f5f7f3; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #69756b; }
+  .timeline-date strong { font-size: 14px; line-height: 1; }
+  .timeline-date span { font-size: 8px; margin-top: 4px; text-transform: uppercase; }
+  .timeline-name { font-size: 11px; font-weight: 750; }
+  .timeline-task { font-size: 10px; line-height: 1.5; color: var(--muted); margin-top: 4px; }
+  .timeline-time { font-size: 9px; color: var(--green); margin-top: 7px; font-weight: 750; }
+  .empty { text-align: center; color: var(--muted); padding: 30px 10px; font-size: 12px; line-height: 1.7; }
+  .empty-icon { font-size: 23px; margin-bottom: 8px; }
+  .list-footer { border-top: 1px solid #eff1ed; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 10px; }
+  .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 31px 0 14px; }
+  .section-heading h2 { font-size: 15px; letter-spacing: -.4px; margin: 0; }
+  .section-heading p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+  .hidden { display: none !important; }
+  .modal-backdrop { position: fixed; inset: 0; background: #17251dcc; z-index: 10; display: grid; place-items: center; padding: 18px; }
+  .modal { background: white; width: min(100%, 500px); max-height: 92vh; overflow: auto; border-radius: 20px; box-shadow: 0 30px 90px #101a1533; }
+  .modal-head { padding: 23px 24px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+  .modal-head h2 { margin: 0; font-size: 17px; letter-spacing: -.5px; }
+  .close { border: 0; background: #f2f4f1; border-radius: 9px; width: 32px; height: 32px; font-size: 18px; }
+  .form { padding: 21px 24px 24px; display: grid; gap: 14px; }
+  .field-wrap { display: grid; gap: 7px; }
+  .field-wrap label { color: #687168; font-size: 11px; font-weight: 700; }
+  .field { width: 100%; border: 1px solid #e2e7e0; background: #fcfdfb; border-radius: 10px; padding: 11px 12px; font-size: 12px; outline: none; }
+  textarea.field { resize: vertical; min-height: 72px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 20; background: #1f2b22; color: white; border-radius: 12px; padding: 12px 17px; font-size: 12px; box-shadow: 0 8px 25px #0002; max-width: calc(100% - 30px); }
+  @media (max-width: 1050px) { .app { grid-template-columns: 205px minmax(0,1fr); } .stats { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 680px) { .app { grid-template-columns: 1fr; } aside { padding: 13px 15px; border-right: 0; border-bottom: 1px solid var(--line); gap: 13px; } .brand { padding: 0 2px; } .brand-sub, .sidebar-bottom, .nav-label { display: none; } nav { display: flex; overflow-x: auto; gap: 5px; padding-bottom: 1px; } .nav-item { flex: 0 0 auto; padding: 9px 11px; } .nav-item .ico { width: auto; } main { padding: 22px 15px 35px; } .topbar { margin-bottom: 27px; } .intro { align-items: start; flex-direction: column; } .date-label { white-space: normal; } .stats { gap: 9px; } .stat { padding: 15px; } .stat-value { font-size: 26px; } .panel-head, .panel-body { padding-left: 15px; padding-right: 15px; } .list-footer { padding-left: 15px; padding-right: 15px; } .form-grid { grid-template-columns: 1fr; } .contact { grid-template-columns: minmax(0,1fr); } .contact-actions { padding-left: 49px; } .filter { min-height: 39px; } .search-row { flex-wrap: wrap; } .search-row .search { flex: 1 1 100%; } .search-row .filter { flex: 1; } }
+
+  /* LOOP polish + added product features */
+  .contact-info{min-width:0}.contact-badges{margin-top:7px}.priority-tag{display:inline-block;vertical-align:middle;background:#fff0e8;color:#a44b1c;border-radius:5px;padding:3px 5px;font-size:8px;letter-spacing:.5px;margin-left:4px}.inline-contact{display:flex;gap:12px;margin-top:7px}.inline-contact a{font-size:10px;color:var(--green);text-decoration:none;font-weight:700}.inline-contact a:hover{text-decoration:underline}
+  .insight-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:13px;align-items:center;background:#ffffff;color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:17px 20px;margin:-4px 0 22px;box-shadow:0 12px 30px #12201408}body.dark .insight-strip{background:#101510;color:#f5f8f2;border-color:#263126;box-shadow:0 12px 30px #00000020}.insight-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#b8ff65;color:#101510;font-size:22px;font-weight:800}.insight-copy{display:grid;gap:4px}.insight-copy strong{font-size:12px}.insight-copy span,.pipeline-count{font-size:10px;color:#aeb9ac}.pipeline-value{font-size:22px;font-weight:800;color:#b8ff65;letter-spacing:-.8px}.pipeline-count{white-space:nowrap}
+  .product-credit{padding:18px 20px;background:linear-gradient(120deg,#fff 0%,#f8fbf6 100%);border:1px solid #e2e9df;box-shadow:0 10px 30px #10201008}.credit-copy{display:grid;gap:5px}.credit-title{font-size:13px;color:#29322a}.credit-title strong{font-weight:800}.credit-caption{font-size:10px;color:#879187}.product-credit-label{font-size:9px;letter-spacing:1.2px;font-weight:800;color:#728073}.comecode-lockup{display:flex;align-items:center;gap:10px;padding:10px 13px;background:#0b0d0c;border:1px solid #263126;border-radius:12px;box-shadow:0 5px 15px #0b0d0c14}.cc-mark{display:flex;align-items:center;justify-content:center;gap:0;width:32px;height:32px;border:1px solid #b8ff6555;border-radius:9px;color:#fff;font-size:15px;font-weight:900;letter-spacing:-3px;padding-right:3px}.cc-mark .cc-first{color:#fff}.cc-mark .cc-second{color:#39ff14}.cc-word{display:grid;gap:2px}.cc-word strong{font-size:13px;letter-spacing:-.5px}.cc-word strong span{color:#fff}.cc-word strong em{color:#b8ff65;font-style:normal}.cc-word small{font-size:8px;letter-spacing:2.4px;color:#9aa49a;font-weight:700}
+  .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.settings-actions{display:grid;gap:10px}.settings-actions .secondary,.settings-actions .danger-btn{text-align:left;padding:12px}.danger-btn{border:1px solid #f0d4d4;background:#fff8f8;color:#a13c3c;border-radius:10px;font-size:12px;font-weight:700}.settings-note{font-size:11px;line-height:1.6;color:var(--muted);margin:5px 0 0}.guide-list{display:grid;gap:18px}.guide-list>div{display:flex;gap:12px}.guide-list b{display:grid;place-items:center;width:30px;height:30px;flex:0 0 auto;border-radius:9px;background:var(--green-soft);color:var(--green-dark);font-size:10px}.guide-list span{display:grid;gap:4px}.guide-list strong{font-size:12px}.guide-list small{font-size:11px;line-height:1.5;color:var(--muted)}
+  body.dark{--bg:#101410;--panel:#191f19;--panel-soft:#1c241c;--ink:#edf3eb;--muted:#9ba79a;--line:#2c372d;--green:#b8ff65;--green-dark:#b8ff65;--green-soft:#253323;--amber:#f2c46d;--amber-soft:#3b3020;--red:#ff9696;--red-soft:#3d2424;--shadow:0 14px 36px rgba(0,0,0,.14)}body.dark aside,body.dark .panel,body.dark .stat,body.dark .product-credit{background:#191f19;border-color:var(--line)}body.dark .brand-mark{background:#000!important;color:#fff!important;border-color:#263126!important}body.dark .brand-mark .cc-first{color:#fff!important}body.dark .brand-mark .cc-second{color:#39ff14!important}body.dark .primary{background:#b8ff65;color:#0b0d0c;border-color:#b8ff65}body.dark .nav-item{color:#aeb8ad}body.dark .nav-item.active{background:#253323;color:#b8ff65}body.dark .nav-count,body.dark .icon-btn,body.dark .secondary,body.dark .mini-btn,body.dark .filter,body.dark .search,body.dark .field{background:#202820;color:#edf3eb;border-color:#344034}body.dark .contact-avatar,body.dark .timeline-date,body.dark .stat-symbol{background:#263226;color:#c9e8bd}body.dark .contact,body.dark .timeline-item,body.dark .panel-head,body.dark .list-footer{border-color:#2c372d}body.dark .upgrade{background:#202820;border-color:#344034}body.dark .upgrade-icon{background:#263226}body.dark .credit-title{color:#edf3eb}body.dark .product-credit{background:linear-gradient(120deg,#191f19,#1d271d)}body.dark .modal{background:#191f19;color:#edf3eb}body.dark .modal-head{border-color:#2c372d}body.dark .close{color:#edf3eb}body.dark .empty{color:#aab5a9}
+  .icon-btn:hover{border-color:#a4c9a8;background:var(--green-soft)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8dca91;outline-offset:2px}.primary:hover{filter:brightness(.96);transform:translateY(-1px)}.primary{transition:transform .15s ease,filter .15s ease}
+  @media(max-width:850px){.settings-grid{grid-template-columns:1fr}.insight-strip{grid-template-columns:auto 1fr auto}.pipeline-count{grid-column:2 / -1}.comecode-lockup{padding:8px 10px}}
+
+  .board{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;overflow-x:auto;padding:2px 2px 12px}.board-col{background:var(--panel-soft);border:1px solid var(--line);border-radius:14px;min-width:220px;overflow:hidden}.board-col-head{padding:13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-size:11px;font-weight:800}.board-card{background:var(--panel);border:1px solid var(--line);border-radius:11px;margin:9px;padding:12px;box-shadow:var(--shadow)}.board-card strong{font-size:12px}.board-card small{display:block;color:var(--muted);margin-top:5px;font-size:10px}.board-card select{width:100%;margin-top:10px}.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.metric{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}.metric small{display:block;color:var(--muted);font-size:10px}.metric strong{display:block;font-size:23px;margin-top:8px;letter-spacing:-.7px}.bar-list{display:grid;gap:12px}.bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 32px;gap:10px;align-items:center;font-size:11px}.bar-track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar-fill{height:100%;background:#b8ff65;border-radius:99px}.template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.template-card{border:1px solid var(--line);border-radius:13px;padding:15px;background:var(--panel)}.template-card h3{font-size:12px;margin:0 0 8px}.template-card p{font-size:11px;line-height:1.6;color:var(--muted);white-space:pre-wrap}.activity-log{display:grid;gap:8px;margin-top:12px}.activity-entry{padding:10px 12px;background:var(--panel-soft);border-radius:10px;font-size:11px}.activity-entry small{display:block;color:var(--muted);margin-top:4px}.settings-actions .secondary{width:100%}.inline-form{display:flex;gap:8px;flex-wrap:wrap}.inline-form .field{flex:1;min-width:150px}.tag{display:inline-flex;padding:4px 7px;border-radius:6px;background:var(--green-soft);color:var(--green-dark);font-size:9px;font-weight:800}.hidden{display:none!important}
+  @media(max-width:850px){.board{grid-template-columns:repeat(4,220px)}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:520px){.metric-grid,.template-grid{grid-template-columns:1fr}.bar-row{grid-template-columns:85px minmax(0,1fr) 24px}.insight-strip{grid-template-columns:auto 1fr}.pipeline-value{grid-column:2}.pipeline-count{grid-column:2}.product-credit{align-items:flex-start}.comecode-lockup{align-self:flex-start}.top-actions{gap:6px}.icon-btn{height:35px;width:35px}.topbar{align-items:flex-start}.contact-actions{padding-left:0;flex-wrap:wrap}}
+
+
+  /* FINAL INPUT VISIBILITY FIX: make typed text and caret explicit in every theme/browser. */
+  input, textarea, select, button { font-family: inherit; }
+  input:not([type="checkbox"]):not([type="radio"]), textarea, select {
+    color: var(--ink) !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    caret-color: var(--green) !important;
+    opacity: 1 !important;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #899389 !important;
+    -webkit-text-fill-color: #899389 !important;
+    opacity: 1 !important;
+  }
+  body.dark input:not([type="checkbox"]):not([type="radio"]),
+  body.dark textarea, body.dark select {
+    color: #edf3eb !important;
+    -webkit-text-fill-color: #edf3eb !important;
+    caret-color: #b8ff65 !important;
+  }
+  body.dark input::placeholder, body.dark textarea::placeholder {
+    color: #9ba79a !important;
+    -webkit-text-fill-color: #9ba79a !important;
+  }
+  .field, .search, .filter, #goalLeads, #goalWon, #goalMeetings, #goalRevenue {
+    min-width: 0; visibility: visible; text-shadow: none !important;
+  }
+  .field:focus, .search:focus, .filter:focus {
+    outline: 2px solid #83bd9c; outline-offset: 1px;
+  }
+  /* Make native date controls visibly interactive and open the picker on click. */
+  input[type="date"].field {
+    cursor: pointer !important;
+    min-height: 42px;
+    color-scheme: light;
+    -webkit-appearance: auto;
+    appearance: auto;
+    touch-action: manipulation;
+  }
+  body.dark input[type="date"].field { color-scheme: dark; }
+  input[type="date"].field::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 1;
+    padding: 3px;
+  }
+
+  .profile-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.profile-field{padding:11px;border:1px solid var(--line);border-radius:10px;min-width:0;overflow-wrap:anywhere}.profile-field small{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}.profile-field div{font-size:12px;white-space:pre-wrap}.profile-fields+.activity-log{margin-top:8px}@media(max-width:520px){.profile-fields{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="brand-mark" aria-label="COMECODE logo"><span class="cc-first">C</span><span class="cc-second">C</span></div>
+      <div><div class="brand-name">LOOP</div><div class="brand-sub">CLIENT FOLLOW-UPS</div></div>
+    </div>
+    <div>
+      <div class="nav-label">Workspace</div>
+      <nav>
+        <button class="nav-item active" data-view="overview"><span class="ico">◫</span> Overview</button>
+        <button class="nav-item" data-view="clients"><span class="ico">♧</span> Clients <span class="nav-count" id="navCount">0</span></button>
+        <button class="nav-item" data-view="followups"><span class="ico">◷</span> Follow-ups</button>
+        <button class="nav-item" data-view="pipeline"><span class="ico">▦</span> Pipeline</button>
+        <button class="nav-item" data-view="analytics"><span class="ico">↗</span> Analytics</button>
+        <button class="nav-item" data-view="templates"><span class="ico">✉</span> Templates</button>
+        <button class="nav-item" data-view="proposals"><span class="ico">▤</span> Proposals</button>
+        <button class="nav-item" data-view="goals"><span class="ico">◎</span> Goals</button>
+        <button class="nav-item" data-view="settings"><span class="ico">⚙</span> Settings</button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="upgrade">
+        <div class="upgrade-icon">✳</div>
+        <strong>A calmer way to work</strong>
+        <p>Keep every client, conversation and next step in one place.</p>
+        <button class="small-link" id="exportBtn">Export your data ↗</button>
+      </div>
+      <div class="user">
+        <div class="avatar">NW</div>
+        <div><div class="user-name">My workspace</div><div class="user-role">Personal account · Local</div></div>
+      </div>
+    </div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="breadcrumb">Workspace <span style="color:#c4cac3"> / </span> <span id="crumb">Overview</span></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
+        <button class="icon-btn" id="backupTop" title="Backup data" aria-label="Backup data">⤓</button>
+        <button class="icon-btn" id="exportTop" title="Export CSV" aria-label="Export CSV">⇩</button>
+        <button class="primary" id="addTop">＋ Add client</button>
+      </div>
+    </div>
+    <section id="overviewView">
+      <div class="intro">
+        <div><div class="eyebrow">ALWAYS IN THE LOOP</div><h1>Every client.<br>Every conversation.</h1><p class="subtitle">Keep every client, conversation and next step in one place.</p></div>
+        <div class="date-label" id="todayLabel"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-top">Total clients <span class="stat-symbol">♧</span></div><div class="stat-value" id="totalStat">0</div><div class="stat-note">People in your network</div></div>
+        <div class="stat"><div class="stat-top">Due today <span class="stat-symbol">◷</span></div><div class="stat-value" id="todayStat">0</div><div class="stat-note">Follow-ups to take care of</div></div>
+        <div class="stat"><div class="stat-top">Overdue <span class="stat-symbol">↗</span></div><div class="stat-value" id="overdueStat">0</div><div class="stat-note">Worth a second look</div></div>
+        <div class="stat"><div class="stat-top">Completed <span class="stat-symbol">✓</span></div><div class="stat-value" id="doneStat">0</div><div class="stat-note">Follow-ups checked off</div></div>
+      </div>
+      <div class="insight-strip"><div class="insight-mark">↗</div><div class="insight-copy"><strong>Your pipeline at a glance</strong><span>Track the potential value of opportunities you've added.</span></div><div class="pipeline-value" id="pipelineValue">₹0</div><div class="pipeline-count"><span id="pipelineCount">0</span> opportunities</div></div>
+      <div class="dashboard-grid">
+        <section class="panel">
+          <div class="panel-head"><div><div class="panel-title">Your clients</div><div class="panel-desc">The people behind your next opportunity.</div></div><button class="secondary" id="viewAll">View all ↗</button></div>
+          <div class="panel-body">
+            <div class="search-row"><input class="search" id="search" placeholder="⌕  Search clients, companies, notes..." aria-label="Search clients"><select class="filter" id="statusFilter" aria-label="Filter by status"><option value="all">All status</option><option value="due">Due / overdue</option><option value="upcoming">Upcoming</option><option value="done">Completed</option><option value="high">High priority</option></select></div>
+            <div class="contact-list" id="contactList"></div>
+          </div>
+          <div class="list-footer"><span id="resultCount">0 clients</span><button class="small-link" id="exportList">Download CSV ↗</button></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><div class="panel-title">Next up</div><div class="panel-desc">A clear view of what needs your attention.</div></div><span class="pill green" id="nextCount">0 scheduled</span></div>
+          <div class="panel-body"><div class="timeline" id="timeline"></div></div>
+          <div class="list-footer"><span>Small steps, stronger relationships.</span><button class="small-link" id="viewFollowups">See all</button></div>
+        </section>
+      </div>
+    </section>
+    <section id="clientsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">YOUR NETWORK</div><h1>Clients, thoughtfully organised.</h1><p class="subtitle">Every relationship, note and next step in one place.</p></div></div>
+      <section class="panel"><div class="panel-head"><div><div class="panel-title">All clients</div><div class="panel-desc">Search, edit, and keep your next steps up to date.</div></div><button class="primary" id="addClientView">＋ Add client</button></div><div class="panel-body"><div class="search-row"><input class="search" id="searchAll" placeholder="⌕  Search clients..." aria-label="Search all clients"><select class="filter" id="statusFilterAll" aria-label="Filter clients"><option value="all">All status</option><option value="due">Due / overdue</option><option value="upcoming">Upcoming</option><option value="done">Completed</option><option value="high">High priority</option></select></div><div class="contact-list" id="contactListAll"></div></div><div class="list-footer"><span id="resultCountAll">0 clients</span></div></section>
+    </section>
+    <section id="followupsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">KEEP THE MOMENTUM</div><h1>Follow through, without the fuss.</h1><p class="subtitle">Your next steps, sorted by when they matter.</p></div></div>
+      <section class="panel"><div class="panel-head"><div><div class="panel-title">Follow-up schedule</div><div class="panel-desc">Mark a task complete when you've done it.</div></div></div><div class="panel-body"><div class="timeline" id="timelineAll"></div></div></section>
+    </section>
+    <section id="pipelineView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">OPPORTUNITY TRACKER</div><h1>Move good leads forward.</h1><p class="subtitle">Change a client's stage right from the board.</p></div></div>
+      <section class="panel"><div class="panel-head"><div><div class="panel-title">Sales pipeline</div><div class="panel-desc">Drag-free, quick stage updates for this lightweight version.</div></div><button class="secondary" id="pipelineAdd">＋ Add client</button></div><div class="panel-body"><div class="board" id="pipelineBoard"></div></div></section>
+    </section>
+    <section id="analyticsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">KNOW YOUR NUMBERS</div><h1>Small wins add up.</h1><p class="subtitle">A quick snapshot based on the records in this browser.</p></div><button class="secondary" id="analyticsExport">Export report CSV</button></div>
+      <div class="metric-grid" id="analyticsMetrics"></div>
+      <section class="panel" style="margin-top:18px"><div class="panel-head"><div><div class="panel-title">Leads by stage</div><div class="panel-desc">Current client distribution.</div></div></div><div class="panel-body"><div class="bar-list" id="stageBars"></div></div></section>
+      <section class="panel" style="margin-top:18px"><div class="panel-head"><div><div class="panel-title">Recent activity</div><div class="panel-desc">Latest notes and status changes.</div></div></div><div class="panel-body" id="recentActivity"></div></section>
+    </section>
+    <section id="templatesView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">SAY IT WELL, FASTER</div><h1>Messages that move things along.</h1><p class="subtitle">Copy a template, personalise it, and send it from your own email or messaging app.</p></div></div>
+      <div class="template-grid" id="templateGrid"></div>
+    </section>
+    <section id="proposalsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">QUOTES & PROPOSALS</div><h1>Keep the next deal visible.</h1><p class="subtitle">Track proposal dates and expiry dates alongside client opportunity values.</p></div><button class="primary" id="proposalAdd">＋ Add proposal</button></div>
+      <section class="panel"><div class="panel-head"><div><div class="panel-title">Proposal tracker</div><div class="panel-desc">Add a proposal from a client record to include it here.</div></div></div><div class="panel-body" id="proposalList"></div></section>
+    </section>
+    <section id="goalsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">MAKE PROGRESS VISIBLE</div><h1>Give the month a target.</h1><p class="subtitle">Set personal targets. LOOP tracks activity from your client records.</p></div></div>
+      <section class="panel"><div class="panel-head"><div><div class="panel-title">Monthly goals</div><div class="panel-desc">Goals are saved locally in this browser.</div></div></div><div class="panel-body"><div class="form-grid"><div class="field-wrap"><label for="goalLeads">New leads target</label><input class="field" type="number" min="0" id="goalLeads" value="10"></div><div class="field-wrap"><label for="goalWon">Deals won target</label><input class="field" type="number" min="0" id="goalWon" value="3"></div><div class="field-wrap"><label for="goalMeetings">Meetings / follow-ups completed target</label><input class="field" type="number" min="0" id="goalMeetings" value="20"></div><div class="field-wrap"><label for="goalRevenue">Revenue target (₹)</label><input class="field" type="number" min="0" id="goalRevenue" value="50000"></div></div><button class="primary" id="saveGoals" style="margin-top:14px">Save goals</button><div id="goalProgress" style="margin-top:20px"></div></div></section>
+    </section>
+    <section id="settingsView" class="hidden">
+      <div class="intro"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>Simple tools. Your data.</h1><p class="subtitle">Manage your local workspace and keep a safe copy of your client list.</p></div></div>
+      <div class="settings-grid">
+        <section class="panel"><div class="panel-head"><div><div class="panel-title">Data & backups</div><div class="panel-desc">Your information stays in this browser unless you export it.</div></div></div><div class="panel-body settings-actions"><button class="secondary" id="backupBtn">Download full backup (.json)</button><button class="secondary" id="importBtn">Restore from backup (.json)</button><input type="file" id="importFile" accept="application/json,.json" hidden><button class="secondary" id="exportSettings">Export clients as CSV</button><button class="secondary" id="importCsvBtn">Import clients from CSV</button><input type="file" id="importCsvFile" accept=".csv,text/csv" hidden><button class="secondary" id="calendarExport">Export follow-ups to calendar (.ics)</button><button class="secondary" id="enableNotifications">Enable browser reminders</button><button class="danger-btn" id="clearAll">Delete all client data</button><p class="settings-note">Tip: download a JSON backup regularly. Clearing browser data may erase this workspace. This prototype does not sync across devices. Use sample data until you are comfortable with the local-only storage limitations.</p></div></section>
+        <section class="panel"><div class="panel-head"><div><div class="panel-title">LOOP essentials</div><div class="panel-desc">A small guide to getting value from the app.</div></div></div><div class="panel-body guide-list"><div><b>01</b><span><strong>Capture the relationship</strong><small>Add the person, company, contact details and opportunity value.</small></span></div><div><b>02</b><span><strong>Choose the next action</strong><small>Every active client should have a clear next step and follow-up date.</small></span></div><div><b>03</b><span><strong>Close the loop</strong><small>Mark follow-ups complete, then set the next date when needed.</small></span></div></div></section>
+      </div>
+    </section>
+    <footer class="product-credit" aria-label="Product attribution">
+      <div class="credit-copy"><div class="product-credit-label">MADE FOR BETTER CLIENT RELATIONSHIPS</div><div class="credit-title">A product by <strong>COMECODE Studio</strong></div><div class="credit-caption">Thoughtfully built. Ready for your next step.</div></div>
+      <div class="comecode-lockup" aria-label="COMECODE Studio"><span class="cc-mark" aria-label="COMECODE logo"><span class="cc-first">C</span><span class="cc-second">C</span></span><span class="cc-word"><strong><span>COME</span><em>CODE</em></strong><small>STUDIO</small></span></div>
+    </footer>
+  </main>
+</div>
+<div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modalTitle">Add a client</h2><button class="close" id="closeModal" aria-label="Close">×</button></div>
+    <form class="form" id="clientForm" novalidate>
+      <input type="hidden" id="clientId">
+      <div class="form-grid">
+        <div class="field-wrap"><label for="name">Full name *</label><input class="field" id="name" required maxlength="100" placeholder="e.g. Aanya Sharma"></div>
+        <div class="field-wrap"><label for="company">Company / project</label><input class="field" id="company" maxlength="100" placeholder="e.g. Studio North"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field-wrap"><label for="email">Email</label><input class="field" id="email" type="email" maxlength="150" placeholder="aanya@example.com"></div>
+        <div class="field-wrap"><label for="phone">Phone</label><input class="field" id="phone" maxlength="40" placeholder="+91..."></div>
+      </div>
+      <div class="form-grid">
+        <div class="field-wrap"><label for="followup">Next follow-up</label><input class="field" id="followup" type="date"></div>
+        <div class="field-wrap"><label for="task">Next step</label><input class="field" id="task" maxlength="160" placeholder="Send the proposal"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field-wrap"><label for="priority">Priority</label><select class="field" id="priority"><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></select></div>
+        <div class="field-wrap"><label for="value">Opportunity value (₹)</label><input class="field" id="value" type="number" min="0" step="1" max="999999999" placeholder="e.g. 15000"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field-wrap"><label for="stage">Relationship stage</label><select class="field" id="stage"><option>Lead</option><option>Contacted</option><option>Meeting</option><option>Proposal sent</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Existing client</option></select></div>
+        <div class="field-wrap"><label for="source">How did they find you?</label><input class="field" id="source" maxlength="80" placeholder="Referral, Instagram, website..."></div>
+      </div>
+      <div class="form-grid"><div class="field-wrap"><label for="proposalDate">Proposal sent date</label><input class="field" id="proposalDate" type="date"></div><div class="field-wrap"><label for="proposalExpiry">Proposal expiry date</label><input class="field" id="proposalExpiry" type="date"></div></div>
+      <div class="field-wrap"><label for="notes">Notes</label><textarea class="field" id="notes" maxlength="1000" placeholder="What should you remember about this client?"></textarea></div>
+      <div class="field-wrap"><label for="activityNote">Log an activity (optional)</label><input class="field" id="activityNote" maxlength="220" placeholder="e.g. Called about the website proposal"></div>
+      <div id="clientHistoryWrap" class="hidden"><label>Activity history</label><div class="activity-log" id="clientHistory"></div></div>
+      <div class="form-actions"><button type="button" class="secondary" id="cancelModal">Cancel</button><button type="submit" class="primary">Save client ↗</button></div>
+    </form>
+  </div>
+</div>
+<div class="modal-backdrop hidden" id="profileBackdrop" role="dialog" aria-modal="true" aria-labelledby="profileHeading">
+  <div class="modal"><div class="modal-head"><h2 id="profileHeading">Client profile</h2><button class="close" id="closeProfile" aria-label="Close profile">×</button></div><div class="panel-body" id="profileContent"></div><div class="form-actions"><button class="secondary" id="profileCloseBtn">Close</button><button class="primary" id="profileEditBtn">Edit client ↗</button></div></div>
+</div>
+<div class="toast hidden" id="toast" role="status"></div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = "loop.clients.v3", OLD_KEYS = ["loop.clients.v2", "loop.clients.v1", "northstar.clients.v1"];
+  const stages = ["Lead","Contacted","Meeting","Proposal sent","Negotiation","Won","Lost","Existing client"];
+  const templates = [
+    {title:"First introduction",body:"Hi {{name}},\n\nThanks for connecting. I’m reaching out to learn a little more about what you’re working on and see if I can help. Would you be open to a quick chat this week?\n\nBest,\n{{your_name}}"},
+    {title:"Friendly follow-up",body:"Hi {{name}},\n\nJust checking in on my previous message. No rush — I wanted to bring this back to the top of your inbox. Happy to answer any questions.\n\nBest,\n{{your_name}}"},
+    {title:"Proposal sent",body:"Hi {{name}},\n\nI’ve sent over the proposal for {{company}}. When you’ve had a chance to review it, let me know if you’d like me to clarify anything or adjust the scope.\n\nThanks,\n{{your_name}}"},
+    {title:"Meeting confirmation",body:"Hi {{name}},\n\nConfirming our meeting. I’m looking forward to hearing more about your goals and discussing the next steps. If there’s anything you’d like me to prepare beforehand, just let me know.\n\nBest,\n{{your_name}}"},
+    {title:"Reconnecting",body:"Hi {{name}},\n\nIt’s been a little while, so I wanted to check in and see how things are going. If your plans or priorities have changed, I’d be glad to reconnect and explore how I can help.\n\nBest,\n{{your_name}}"},
+    {title:"Thanks for the opportunity",body:"Hi {{name}},\n\nThanks for considering me for this project. I appreciate the opportunity and your time. Please feel free to reach out if any questions come up.\n\nBest,\n{{your_name}}"}
+  ];
+  let clients = [], activeView = "overview", toastTimer;
+  const makeId = () => (globalThis.crypto && typeof crypto.randomUUID === "function") ? crypto.randomUUID() : "loop-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,10);
+  try { const saved = localStorage.getItem(STORAGE_KEY) ?? OLD_KEYS.map(k=>localStorage.getItem(k)).find(Boolean) ?? "[]"; const parsed=JSON.parse(saved); clients=Array.isArray(parsed)?parsed.map(normalize):[]; } catch { clients=[]; }
+  function normalize(c){return {...c,id:String(c.id||makeId()),name:String(c.name||"Unnamed client"),company:String(c.company||""),email:String(c.email||""),phone:String(c.phone||""),followup:String(c.followup||""),task:String(c.task||""),notes:String(c.notes||""),priority:c.priority||"normal",value:Math.max(0,Number(c.value)||0),stage:c.stage||"Lead",source:String(c.source||""),completed:!!c.completed,proposalDate:String(c.proposalDate||""),proposalExpiry:String(c.proposalExpiry||""),history:Array.isArray(c.history)?c.history:[]};}
+  const today = () => { const d=new Date(); d.setHours(0,0,0,0); return d; };
+  const dateString = d => {const x=new Date(d);return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10);};
+  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const parseDate = s => { if(!s)return null; const d=new Date(s+"T00:00:00"); return Number.isNaN(d.getTime())?null:d; };
+  const status = c => { if(c.completed)return "done"; const d=parseDate(c.followup); if(!d)return "none"; if(d<today())return "overdue"; if(d.getTime()===today().getTime())return "due"; return "upcoming"; };
+  const statusLabel = s => ({done:"Completed",overdue:"Overdue",due:"Due today",upcoming:"Upcoming",none:"No date"})[s]||s;
+  const badge = s => `<span class="pill ${s==='overdue'?'red':s==='due'?'amber':s==='upcoming'?'green':'gray'}"><span class="dot"></span>${statusLabel(s)}</span>`;
+  const initials = n => String(n||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
+  const formatDate = s => { const d=parseDate(s); return d?d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}):"No date set"; };
+  const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(n)||0);
+  function notify(message){const t=$("toast");t.textContent=message;t.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),3800);}
+  function persist(){
+    let stored=false;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(clients)); stored=true; }
+    catch(e) { console.error("LOOP storage error:", e); }
+    // A display/rendering error must never prevent the save dialog from closing.
+    try { render(); } catch(e) { console.error("LOOP render error:", e); }
+    if(!stored) notify("Client added for this session, but browser storage is blocked. Open LOOP in Chrome/Edge (not a restricted preview) and use Settings → Download full backup to protect your data.");
+    return stored;
+  }
+  function logActivity(c,text){if(!text)return;c.history=Array.isArray(c.history)?c.history:[];c.history.unshift({text:String(text).trim(),at:new Date().toISOString()});c.history=c.history.slice(0,100);}
+  function openModal(c){$("clientForm").reset();$("clientId").value=c?.id||"";$("modalTitle").textContent=c?"Edit client":"Add a client";["name","company","email","phone","followup","task","notes","priority","value","stage","source","proposalDate","proposalExpiry"].forEach(k=>{if($(k))$(k).value=c?.[k]??({priority:"normal",stage:"Lead"}[k]||"")});$("activityNote").value="";const wrap=$("clientHistoryWrap");if(c&&c.history?.length){wrap.classList.remove("hidden");$("clientHistory").innerHTML=c.history.map(h=>`<div class="activity-entry">${esc(h.text)}<small>${esc(new Date(h.at).toLocaleString())}</small></div>`).join("");}else{wrap.classList.add("hidden");$("clientHistory").innerHTML="";}$("modalBackdrop").classList.remove("hidden");setTimeout(()=>$ ("name").focus(),30);}
+  function closeModal(){$("modalBackdrop").classList.add("hidden");}
+  function go(view){activeView=view;["overview","clients","followups","pipeline","analytics","templates","proposals","goals","settings"].forEach(v=>$(v+"View")?.classList.toggle("hidden",v!==view));document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("crumb").textContent=({clients:"Clients",followups:"Follow-ups",pipeline:"Pipeline",analytics:"Analytics",templates:"Templates",proposals:"Proposals",goals:"Goals",settings:"Settings"})[view]||"Overview";render();window.scrollTo({top:0,behavior:"smooth"});}
+  function filtered(list,q,filter){q=(q||"").trim().toLowerCase();return list.filter(c=>{const match=[c.name,c.company,c.email,c.phone,c.notes,c.task,c.stage,c.source].some(v=>String(v||"").toLowerCase().includes(q));const st=status(c);const ok=filter==="all"||(filter==="due"&&(st==="due"||st==="overdue"))||(filter==="upcoming"&&st==="upcoming")||(filter==="done"&&st==="done")||(filter==="high"&&c.priority==="high");return match&&ok;});}
+  function contactHTML(c){const st=status(c),priority=c.priority||"normal";return `<article class="contact"><div class="contact-main"><div class="contact-avatar">${esc(initials(c.name))}</div><div class="contact-info"><div class="contact-name">${esc(c.name)} ${priority==='high'?'<span class="priority-tag">HIGH PRIORITY</span>':''}</div><div class="contact-meta">${esc(c.company||c.email||c.phone||"Independent contact")} · ${esc(c.stage||"Lead")}</div><div class="contact-meta">${c.value?`Opportunity: ${money(c.value)} · `:""}${c.followup?`Next: ${esc(formatDate(c.followup))}`:"No follow-up date"}</div><div class="contact-badges">${badge(st)}</div><div class="inline-contact">${c.email?`<a href="mailto:${esc(c.email)}" data-contact-action="email" data-contact-value="${esc(c.email)}" title="Open a new email to ${esc(c.email)}">✉ Email</a>`:""}${c.phone?`<a href="tel:${esc(c.phone.replace(/[^+\d]/g,''))}" data-contact-action="call" data-contact-value="${esc(c.phone.replace(/[^+\d]/g,''))}" title="Call ${esc(c.phone)}">☎ Call</a>`:""}</div></div></div><div class="contact-actions"><button class="mini-btn" data-action="profile" data-id="${esc(c.id)}">Profile</button><button class="mini-btn" data-action="edit" data-id="${esc(c.id)}">Edit</button>${c.followup&&!c.completed?`<button class="mini-btn" data-action="done" data-id="${esc(c.id)}">✓ Done</button>`:""}<button class="mini-btn" data-action="delete" data-id="${esc(c.id)}">Delete</button></div></article>`;}
+  function timelineHTML(c){const st=status(c),d=parseDate(c.followup);return `<div class="timeline-item"><div class="timeline-date"><strong>${d?d.getDate():"—"}</strong><span>${d?d.toLocaleDateString(undefined,{month:"short"}):"No date"}</span></div><div><div class="timeline-name">${esc(c.name)} ${badge(st)}</div><div class="timeline-task">${esc(c.task||"Follow up with this client")}${c.priority==='high'?' · High priority':''}</div><div class="timeline-time">${esc(formatDate(c.followup))}</div>${!c.completed?`<button class="mini-btn" style="margin-top:9px" data-action="done" data-id="${esc(c.id)}">Mark complete ✓</button> <button class="mini-btn" style="margin-top:9px" data-action="reschedule" data-id="${esc(c.id)}">Tomorrow ↗</button>`:""}</div></div>`;}
+  let profileClientId=null;
+  function openProfile(c){if(!c)return;profileClientId=c.id;const history=(c.history||[]).map(h=>`<div class="activity-entry">${esc(h.text)}<small>${esc(new Date(h.at).toLocaleString())}</small></div>`).join("")||'<div class="empty">No activity logged yet.</div>';const rows=[['Company / project',c.company||'—'],['Email',c.email||'—'],['Phone',c.phone||'—'],['Relationship stage',c.stage||'Lead'],['Opportunity value',money(c.value)],['Next follow-up',formatDate(c.followup)],['Next step',c.task||'—'],['Priority',c.priority||'normal'],['Source',c.source||'—'],['Proposal sent',formatDate(c.proposalDate)],['Proposal expiry',formatDate(c.proposalExpiry)],['Notes',c.notes||'—']];$('profileContent').innerHTML=`<div class="contact-avatar" style="margin-bottom:12px">${esc(initials(c.name))}</div><h3 style="margin:0 0 14px">${esc(c.name)}</h3><div class="profile-fields">${rows.map(([k,v])=>`<div class="profile-field"><small>${esc(k)}</small><div>${esc(v)}</div></div>`).join('')}</div><h3 style="font-size:13px;margin:20px 0 8px">Activity timeline</h3><div class="activity-log">${history}</div>`;$('profileBackdrop').classList.remove('hidden');}
+  function closeProfile(){$('profileBackdrop').classList.add('hidden');profileClientId=null;}
+  function renderContacts(target,countTarget,q,filter,limit){const el=$(target);if(!el)return;const list=filtered(clients,q,filter).sort((a,b)=>{if((a.priority==='high')!==(b.priority==='high'))return a.priority==='high'?-1:1;return (a.followup||"9999").localeCompare(b.followup||"9999");});const shown=limit?list.slice(0,limit):list;el.innerHTML=shown.length?shown.map(contactHTML).join(""):`<div class="empty"><div class="empty-icon">◎</div><strong>${q||filter!=="all"?"No matching clients":"Your client list starts here"}</strong><br>${q||filter!=="all"?"Try a different search or filter.":"Add your first client to start building your pipeline."}</div>`;if(countTarget&&$(countTarget))$(countTarget).textContent=`${list.length} client${list.length===1?"":"s"}${limit&&list.length>limit?` · showing ${limit}`:""}`;}
+  function renderTimeline(target,limit){const el=$(target);if(!el)return;const list=clients.filter(c=>c.followup&&!c.completed).sort((a,b)=>a.followup.localeCompare(b.followup));const shown=limit?list.slice(0,limit):list;el.innerHTML=shown.length?shown.map(timelineHTML).join(""):`<div class="empty"><div class="empty-icon">◷</div><strong>Nothing on the schedule</strong><br>Add a follow-up date to see your next steps here.</div>`;if(target==="timeline"&&$("nextCount"))$("nextCount").textContent=`${list.length} scheduled`;}
+  function renderPipeline(){const el=$("pipelineBoard");if(!el)return;const boardStages=["Lead","Contacted","Meeting","Proposal sent","Negotiation","Won","Lost","Existing client"];el.innerHTML=boardStages.map(stage=>{const list=clients.filter(c=>c.stage===stage);return `<div class="board-col"><div class="board-col-head"><span>${esc(stage)}</span><span class="tag">${list.length}</span></div>${list.length?list.map(c=>`<div class="board-card"><strong>${esc(c.name)}</strong><small>${esc(c.company||"Independent contact")}</small><small>${c.value?money(c.value):"No value set"}</small><select class="field" aria-label="Change ${esc(c.name)} stage" data-stage-id="${esc(c.id)}">${stages.map(x=>`<option ${x===c.stage?"selected":""}>${esc(x)}</option>`).join("")}</select><button class="mini-btn" data-action="edit" data-id="${esc(c.id)}">Open record</button></div>`).join(""):`<div class="empty">No leads here yet</div>`}</div>`}).join("");}
+  function renderAnalytics(){const el=$("analyticsMetrics");if(!el)return;const won=clients.filter(c=>c.stage==="Won"),active=clients.filter(c=>!['Lost','Won'].includes(c.stage)),completed=clients.filter(c=>c.completed).length,overdue=clients.filter(c=>status(c)==="overdue").length,pipe=active.reduce((a,c)=>a+(Number(c.value)||0),0),wonValue=won.reduce((a,c)=>a+(Number(c.value)||0),0),conversion=clients.length?Math.round(won.length/clients.length*100):0;el.innerHTML=[["Active pipeline",money(pipe)],["Won value",money(wonValue)],["Win rate",conversion+"%"],["Clients",clients.length],["Follow-ups completed",completed],["Overdue follow-ups",overdue]].map(([l,v])=>`<div class="metric"><small>${l}</small><strong>${v}</strong></div>`).join("");const bars=$("stageBars");bars.innerHTML=stages.map(st=>{const n=clients.filter(c=>c.stage===st).length,p=clients.length?Math.round(n/clients.length*100):0;return `<div class="bar-row"><span>${esc(st)}</span><div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div><strong>${n}</strong></div>`}).join("");const activity=clients.flatMap(c=>(c.history||[]).map(h=>({...h,name:c.name}))).sort((a,b)=>b.at.localeCompare(a.at)).slice(0,12);$("recentActivity").innerHTML=activity.length?activity.map(a=>`<div class="activity-entry">${esc(a.text)} <span class="tag">${esc(a.name)}</span><small>${esc(new Date(a.at).toLocaleString())}</small></div>`).join(""):`<div class="empty">Activity you log on client records will appear here.</div>`;}
+  function renderTemplates(){const el=$("templateGrid");if(!el)return;el.innerHTML=templates.map((t,i)=>`<article class="template-card"><h3>${esc(t.title)}</h3><p>${esc(t.body.replaceAll("{{name}}","[Client name]").replaceAll("{{company}}","[Company]").replaceAll("{{your_name}}","[Your name]"))}</p><button class="secondary" data-template="${i}">Copy template</button></article>`).join("");}
+  function renderProposals(){const el=$("proposalList");if(!el)return;const list=clients.filter(c=>c.proposalDate||c.proposalExpiry||["Proposal sent","Negotiation"].includes(c.stage));el.innerHTML=list.length?list.map(c=>`<div class="contact"><div class="contact-info"><div class="contact-name">${esc(c.name)} ${c.proposalExpiry&&c.proposalExpiry<dateString(new Date())?'<span class="priority-tag">EXPIRY PASSED</span>':''}</div><div class="contact-meta">${esc(c.company||"Independent contact")} · ${esc(c.stage)}</div><div class="contact-meta">Value: ${money(c.value)} · Sent: ${esc(formatDate(c.proposalDate))} · Expires: ${esc(formatDate(c.proposalExpiry))}</div></div><div class="contact-actions"><button class="mini-btn" data-action="edit" data-id="${esc(c.id)}">Edit</button></div></div>`).join(""):`<div class="empty">No proposals tracked yet. Add a proposal date to a client record to see it here.</div>`;}
+  function goalData(){try{return JSON.parse(localStorage.getItem("loop.goals.v1")||'{"leads":10,"won":3,"meetings":20,"revenue":50000}')}catch{return {leads:10,won:3,meetings:20,revenue:50000}}}
+  function renderGoals(){if(!$('goalProgress'))return;const g=goalData();['Leads','Won','Meetings','Revenue'].forEach((k,i)=>{const id=['goalLeads','goalWon','goalMeetings','goalRevenue'][i];if($(id)&&document.activeElement!==$(id))$(id).value=g[k.toLowerCase()]??g[['leads','won','meetings','revenue'][i]]??0;});const month=dateString(new Date()).slice(0,7),newLeads=clients.filter(c=>(c.createdAt||'').slice(0,7)===month).length,won=clients.filter(c=>c.stage==='Won').length,meetings=clients.reduce((a,c)=>a+(c.completed?1:0),0),revenue=clients.filter(c=>c.stage==='Won').reduce((a,c)=>a+(Number(c.value)||0),0);const rows=[["New leads",newLeads,Number(g.leads)||0],["Deals won",won,Number(g.won)||0],["Completed follow-ups",meetings,Number(g.meetings)||0],["Won value",revenue,Number(g.revenue)||0]];$('goalProgress').innerHTML=rows.map(([l,n,t])=>{const pct=t?Math.min(100,Math.round(n/t*100)):0;return `<div style="margin:14px 0"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px"><strong>${l}</strong><span>${l==='Won value'?money(n)+" / "+money(t):n+" / "+t}</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div>`}).join("");}
+  function render(){const due=clients.filter(c=>status(c)==="due").length,overdue=clients.filter(c=>status(c)==="overdue").length,done=clients.filter(c=>c.completed).length;$("totalStat").textContent=clients.length;$("todayStat").textContent=due;$("overdueStat").textContent=overdue;$("doneStat").textContent=done;$("navCount").textContent=clients.length;renderContacts("contactList","resultCount",$("search")?.value||"",$("statusFilter")?.value||"all",5);renderContacts("contactListAll","resultCountAll",$("searchAll")?.value||"",$("statusFilterAll")?.value||"all",0);renderTimeline("timeline",5);renderTimeline("timelineAll",0);const active=clients.filter(c=>!['Lost','Won'].includes(c.stage));const total=active.reduce((sum,c)=>sum+Math.max(0,Number(c.value)||0),0);$("pipelineValue").textContent=money(total);$("pipelineCount").textContent=active.filter(c=>Number(c.value)>0).length;renderPipeline();renderAnalytics();renderTemplates();renderProposals();if(activeView==='goals')renderGoals();}
+  function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  function csvCell(v){return `"${String(v??"").replace(/"/g,'""')}"`;}
+  function exportCSV(){const headers=["Name","Company","Email","Phone","Follow-up","Next step","Notes","Status","Priority","Opportunity value INR","Stage","Source","Proposal date","Proposal expiry"];const rows=clients.map(c=>[c.name,c.company,c.email,c.phone,c.followup,c.task,c.notes,statusLabel(status(c)),c.priority||"normal",c.value||0,c.stage||"Lead",c.source||"",c.proposalDate,c.proposalExpiry]);const csv=[headers,...rows].map(row=>row.map(csvCell).join(",")).join("\r\n");download("loop-clients.csv","\uFEFF"+csv,"text/csv;charset=utf-8;");notify("Client list exported as CSV.");}
+  function exportReport(){const rows=[["Metric","Value"],["Total clients",clients.length],["Won deals",clients.filter(c=>c.stage==='Won').length],["Win rate",(clients.length?Math.round(clients.filter(c=>c.stage==='Won').length/clients.length*100):0)+"%"],["Active pipeline INR",clients.filter(c=>!['Won','Lost'].includes(c.stage)).reduce((a,c)=>a+(Number(c.value)||0),0)],["Won value INR",clients.filter(c=>c.stage==='Won').reduce((a,c)=>a+(Number(c.value)||0),0)],["Overdue follow-ups",clients.filter(c=>status(c)==='overdue').length]];download("loop-analytics.csv",rows.map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8;");notify("Analytics report exported.");}
+  function backup(){download("loop-backup-"+dateString(new Date())+".json",JSON.stringify({app:"LOOP",version:3,exportedAt:new Date().toISOString(),clients,goals:goalData()},null,2),"application/json");notify("Backup downloaded. Keep it somewhere safe.");}
+  function importBackup(file){const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result),items=Array.isArray(data)?data:data.clients;if(!Array.isArray(items))throw new Error("Invalid backup");if(!confirm(`Restore ${items.length} clients? This replaces the current list.`))return;clients=items.map(normalize);if(data.goals)localStorage.setItem("loop.goals.v1",JSON.stringify(data.goals));persist();notify("Backup restored.");}catch{notify("That file doesn't look like a LOOP backup.");}};reader.readAsText(file);}
+  function parseCSV(text){const rows=[];let row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(ch==='"'&&quoted&&next==='"'){cell+='"';i++;}else if(ch==='"'){quoted=!quoted;}else if(ch===','&&!quoted){row.push(cell);cell='';}else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(v=>v.trim()))rows.push(row);row=[];cell='';}else cell+=ch;}if(cell.length||row.length){row.push(cell);rows.push(row);}return rows;}
+  function importCSV(file){const reader=new FileReader();reader.onload=()=>{try{const rows=parseCSV(String(reader.result).replace(/^\uFEFF/,''));if(rows.length<2)throw new Error();const heads=rows.shift().map(h=>h.trim().toLowerCase());const get=(r,...keys)=>{const i=heads.findIndex(h=>keys.includes(h));return i>=0?(r[i]||'').trim():''};let added=0,skipped=0;rows.forEach(r=>{const name=get(r,'name','full name');if(!name){skipped++;return;}const email=get(r,'email');const dup=clients.some(c=>(email&&c.email.toLowerCase()===email.toLowerCase())||c.name.toLowerCase()===name.toLowerCase()&&(get(r,'company','company / project')||'').toLowerCase()===c.company.toLowerCase());if(dup){skipped++;return;}clients.push(normalize({id:makeId(),name,company:get(r,'company','company / project'),email,phone:get(r,'phone'),followup:get(r,'follow-up','followup','next follow-up'),task:get(r,'next step','task'),notes:get(r,'notes'),priority:get(r,'priority')||'normal',value:get(r,'opportunity value inr','value','opportunity value'),stage:get(r,'stage')||'Lead',source:get(r,'source'),proposalDate:get(r,'proposal date'),proposalExpiry:get(r,'proposal expiry'),createdAt:new Date().toISOString(),history:[]}));added++;});persist();notify(`Imported ${added} clients. Skipped ${skipped} blank or duplicate rows.`);}catch{notify('Could not read this CSV. Use a standard CSV with a Name column.');}};reader.readAsText(file);}
+  function exportCalendar(){const list=clients.filter(c=>c.followup&&!c.completed);const escIcs=s=>String(s||'').replace(/\\/g,'\\\\').replace(/,/g,'\\,').replace(/;/g,'\\;').replace(/\n/g,'\\n');const events=list.map(c=>{const dt=c.followup.replace(/-/g,'');return `BEGIN:VEVENT\r\nUID:${escIcs(c.id)}@loop-comecode\r\nDTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')}\r\nDTSTART;VALUE=DATE:${dt}\r\nSUMMARY:${escIcs('LOOP follow-up: '+c.name)}\r\nDESCRIPTION:${escIcs(c.task||'Follow up with '+c.name)}\r\nEND:VEVENT`;});download('loop-followups.ics',`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//COMECODE Studio//LOOP//EN\r\n${events.join('\r\n')}\r\nEND:VCALENDAR`,'text/calendar;charset=utf-8');notify(`Exported ${list.length} follow-ups for your calendar.`);}
+  function saveClient(e){
+    if(e && typeof e.preventDefault === "function") e.preventDefault();
+    try {
+      const id=$("clientId").value;
+      const old=clients.find(x=>x.id===id);
+      const name=$("name").value.trim();
+      if(!name){ $("name").focus(); notify("Please enter the client's name."); return; }
+      const email=$("email").value.trim();
+      if(email && !/^\S+@\S+\.\S+$/.test(email)){ notify("Please enter a valid email address."); $("email").focus(); return; }
+      const enteredValue=$("value").value.trim();
+      if(enteredValue!=="" && (!Number.isFinite(Number(enteredValue)) || Number(enteredValue)<0)){notify("Opportunity value must be a valid amount of ₹0 or more.");$("value").focus();return;}
+      const companyValue=$("company").value.trim();
+      const duplicate=clients.find(x=>x.id!==id && ((email && x.email.toLowerCase()===email.toLowerCase()) || (x.name.trim().toLowerCase()===name.toLowerCase() && x.company.trim().toLowerCase()===companyValue.toLowerCase())));
+      if(duplicate) notify(`Possible duplicate: ${duplicate.name}${duplicate.company?" ("+duplicate.company+")":""}. Saving this client; check for duplicates afterward.`);
+      const sentDate=$("proposalDate").value, expiryDate=$("proposalExpiry").value;
+      const dateWarning = !!(sentDate && expiryDate && expiryDate<sentDate);
+      if(dateWarning) notify("Warning: proposal expiry is earlier than the sent date. The client will still be saved; please check those dates.");
+      const c=normalize({...old,id:id||makeId(),name,company:$("company").value.trim(),email,phone:$("phone").value.trim(),followup:$("followup").value,task:$("task").value.trim(),notes:$("notes").value.trim(),priority:$("priority").value,value:Math.max(0,Number($("value").value)||0),stage:$("stage").value,source:$("source").value.trim(),proposalDate:$("proposalDate").value,proposalExpiry:$("proposalExpiry").value,completed:old?.completed||false,createdAt:old?.createdAt||new Date().toISOString(),history:old?.history||[]});
+      const activity=$("activityNote").value.trim();
+      if(!old) logActivity(c,"Client created");
+      if(activity) logActivity(c,activity);
+      if(old && old.stage!==c.stage) logActivity(c,`Stage changed: ${old.stage} → ${c.stage}`);
+      if(id) clients=clients.map(x=>x.id===id?c:x); else clients.unshift(c);
+      const saved=persist();
+      closeModal();
+      // Re-render after closing; if one widget has a bug, the client is still saved.
+      try { render(); } catch(err) { console.error("LOOP display update error:",err); }
+      notify(saved ? (id?"Client updated successfully.":"Client saved successfully — you're in the loop.") : "Client is added for this session, but permanent browser storage failed. Open LOOP in a regular Chrome/Edge tab and back up your data.");
+    } catch(err) {
+      console.error("LOOP could not save this client:",err);
+      notify("LOOP hit an unexpected error while saving. Please refresh the page and try again; check the browser console if it continues.");
+    }
+  }
+  document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
+  ["addTop","addClientView","pipelineAdd"].forEach(id=>$(id)?.addEventListener("click",()=>openModal()));
+  $("proposalAdd")?.addEventListener("click",()=>{go('clients');openModal();notify('Add a client or edit an existing client, then set the proposal dates.');});
+  ["closeModal","cancelModal"].forEach(id=>$(id).addEventListener("click",closeModal));$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();go("clients");$("searchAll").focus();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="n"){e.preventDefault();openModal();}});
+  $("clientForm").addEventListener("submit",saveClient);document.addEventListener("click",async e=>{const link=e.target.closest("a[data-contact-action]");if(!link)return;const value=link.dataset.contactValue||"";const action=link.dataset.contactAction;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(value);notify(action==="email"?"Email address copied. If your mail app didn't open, paste it into your email app.":"Phone number copied. If your calling app didn't open, paste it into your phone app.");}}catch{}});
+  ["closeProfile","profileCloseBtn"].forEach(id=>$(id).addEventListener("click",closeProfile));
+  $("profileBackdrop").addEventListener("click",e=>{if(e.target===$("profileBackdrop"))closeProfile();});
+  $("profileEditBtn").addEventListener("click",()=>{const c=clients.find(x=>x.id===profileClientId);closeProfile();if(c)openModal(c);});
+  $("enableNotifications")?.addEventListener("click",async()=>{if(!('Notification' in window)){notify('Browser notifications are not supported here. In-app reminders still work while LOOP is open.');return;}try{const permission=await Notification.requestPermission();if(permission==='granted'){new Notification('LOOP reminders enabled',{body:'You can receive follow-up reminders while this page is open.'});notify('Browser notifications enabled. Keep LOOP open for reminders.');}else notify('Notifications were not enabled. You can still use the in-app follow-up list.');}catch{notify('Could not enable browser notifications in this preview.');}});
+  // Explicit button fallback: prevent the browser's default submit so the save handler runs exactly once in file previews too.
+  $("clientForm").querySelector('button[type="submit"]')?.addEventListener("click",e=>{e.preventDefault();saveClient(e);});
+  document.addEventListener("click",e=>{const t=e.target.closest('[data-template]');if(t){const temp=templates[Number(t.dataset.template)];if(temp){const sample=temp.body.replaceAll('{{name}}','[Client name]').replaceAll('{{company}}','[Company]').replaceAll('{{your_name}}','[Your name]');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(sample).then(()=>notify('Template copied. Personalise it before sending.')).catch(()=>prompt('Copy your template:',sample));else prompt('Copy your template:',sample);}return;}const b=e.target.closest("[data-action]");if(!b)return;const c=clients.find(x=>x.id===b.dataset.id);if(!c)return;if(b.dataset.action==="profile")openProfile(c);if(b.dataset.action==="edit")openModal(c);if(b.dataset.action==="done"){c.completed=true;logActivity(c,'Follow-up marked complete');persist();notify("Follow-up completed. Nice work.");}if(b.dataset.action==="reschedule"){const d=new Date();d.setDate(d.getDate()+1);c.followup=dateString(d);c.completed=false;logActivity(c,'Follow-up rescheduled for tomorrow');persist();notify("Follow-up moved to tomorrow.");}if(b.dataset.action==="delete"&&confirm(`Delete ${c.name}? This cannot be undone unless you have a backup.`)){clients=clients.filter(x=>x.id!==c.id);persist();notify("Client deleted.");}});
+  document.addEventListener('change',e=>{if(e.target.matches('[data-stage-id]')){const c=clients.find(x=>x.id===e.target.dataset.stageId);if(c){const before=c.stage;c.stage=e.target.value;logActivity(c,`Stage changed: ${before} → ${c.stage}`);persist();notify('Pipeline stage updated.');}}});
+  // Open the native calendar reliably when a user clicks/taps a date field.
+  ["followup","proposalDate","proposalExpiry"].forEach(id=>{
+    const input=$(id);
+    if(!input) return;
+    input.addEventListener("click",()=>{
+      if(typeof input.showPicker === "function"){
+        try { input.showPicker(); } catch (_) { /* Browser may already have opened it. */ }
+      }
+    });
+    input.addEventListener("keydown",e=>{
+      if((e.key==="Enter" || e.key===" ") && typeof input.showPicker === "function"){
+        e.preventDefault(); try { input.showPicker(); } catch (_) {}
+      }
+    });
+  });
+
+  ["search","searchAll"].forEach(id=>$(id).addEventListener("input",render));["statusFilter","statusFilterAll"].forEach(id=>$(id).addEventListener("change",render));$("viewAll").addEventListener("click",()=>go("clients"));$("viewFollowups").addEventListener("click",()=>go("followups"));
+  ["exportBtn","exportTop","exportList","exportSettings"].forEach(id=>$(id).addEventListener("click",exportCSV));["backupTop","backupBtn"].forEach(id=>$(id).addEventListener("click",backup));$("importBtn").addEventListener("click",()=>$ ("importFile").click());$("importFile").addEventListener("change",e=>{if(e.target.files[0])importBackup(e.target.files[0]);e.target.value="";});
+  // Delete all client records using an in-app confirmation dialog (works in embedded previews too).
+  function performClearAll(){
+    clients = [];
+    let storageCleared = false;
+    try {
+      const clientKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && /^(loop|northstar)\.clients(\.|$)/i.test(key)) clientKeys.push(key);
+      }
+      clientKeys.forEach(key => localStorage.removeItem(key));
+      localStorage.setItem(STORAGE_KEY, "[]");
+      storageCleared = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null")?.length === 0;
+    } catch (err) { console.error("LOOP could not clear client data from storage:", err); }
+    try { render(); } catch (err) { console.error("LOOP render after deletion failed:", err); }
+    if (storageCleared) notify("All client data deleted. The empty list was saved in this browser.");
+    else notify("Client list cleared on screen, but browser storage blocked permanent deletion. Open LOOP in a regular Chrome/Edge tab and try again.");
+  }
+  $("clearAll").addEventListener("click", (event) => {
+    event.preventDefault();
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    backdrop.style.zIndex = "1000";
+    backdrop.innerHTML = `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="deleteConfirmTitle"><div class="modal-head"><h2 id="deleteConfirmTitle">Delete all client data?</h2><button type="button" class="close" data-delete-cancel aria-label="Cancel">×</button></div><div class="panel-body"><p>This permanently deletes all clients and their activity history from this browser. Export a backup first if you may need these records.</p><div class="form-actions"><button type="button" class="secondary" data-delete-cancel>Cancel</button><button type="button" class="danger-btn" data-delete-confirm>Delete all data</button></div></div></div>`;
+    document.body.appendChild(backdrop);
+    const close = () => backdrop.remove();
+    backdrop.querySelectorAll("[data-delete-cancel]").forEach(btn => btn.addEventListener("click", close));
+    backdrop.addEventListener("click", e => { if (e.target === backdrop) close(); });
+    backdrop.querySelector("[data-delete-confirm]").addEventListener("click", () => { close(); performClearAll(); });
+    backdrop.querySelector("[data-delete-confirm]").focus();
+  });
+  $("importCsvBtn")?.addEventListener('click',()=>$("importCsvFile").click());$("importCsvFile")?.addEventListener('change',e=>{if(e.target.files[0])importCSV(e.target.files[0]);e.target.value='';});$("calendarExport")?.addEventListener('click',exportCalendar);$("analyticsExport")?.addEventListener('click',exportReport);
+  $("saveGoals")?.addEventListener('click',()=>{const goals={leads:Math.max(0,Number($("goalLeads").value)||0),won:Math.max(0,Number($("goalWon").value)||0),meetings:Math.max(0,Number($("goalMeetings").value)||0),revenue:Math.max(0,Number($("goalRevenue").value)||0)};try{localStorage.setItem('loop.goals.v1',JSON.stringify(goals));renderGoals();notify('Monthly goals saved.');}catch{notify('Could not save goals in browser storage.');}});
+  const themeKey="loop.theme.v1";function setTheme(dark){document.body.classList.toggle("dark",dark);$("themeToggle").textContent=dark?"☀":"◐";try{localStorage.setItem(themeKey,dark?"dark":"light");}catch{}}let savedTheme='light';try{savedTheme=localStorage.getItem(themeKey)||'light'}catch{}setTheme(savedTheme==="dark");$("themeToggle").addEventListener("click",()=>setTheme(!document.body.classList.contains("dark")));
+  $("todayLabel").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});render();renderGoals();
+  function checkFollowupReminders(){const attention=clients.filter(c=>status(c)==="overdue"||status(c)==="due");if(!attention.length)return;const key=`loop.reminder.${dateString(new Date())}.${attention.length}`;let shown='';try{shown=localStorage.getItem('loop.reminder.last')||'';}catch{}if(shown===key)return;try{localStorage.setItem('loop.reminder.last',key);}catch{}notify(`${attention.length} follow-up${attention.length===1?'':'s'} need your attention today.`);if('Notification' in window&&Notification.permission==='granted'){try{new Notification('LOOP follow-up reminder',{body:`${attention.length} follow-up${attention.length===1?'':'s'} are due or overdue.`});}catch{}}}
+  setTimeout(checkFollowupReminders,900);setInterval(checkFollowupReminders,60000);
+})();
+</script>
+</body>
+</html>
